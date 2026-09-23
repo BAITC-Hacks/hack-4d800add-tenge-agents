@@ -14,8 +14,12 @@ This is the definition of done. Checkboxes reflect tests actually run on
   can be explained from computed evidence in under one minute each.
 - [x] Every node has a cluster; `clusters.csv` contains cluster size, seed
   count, internal turnover, top gids, and a cautious hypothesis.
-- [ ] `top_nodes.csv` contains at least 20 sorted rows with `why` text; the local
-  viewer can search any gid and show directed connections and its role.
+- [x] `top_nodes.csv` contains 30 sorted rows with numeric `why` text.
+- [x] The generated viewer embeds all 2,248 exact gids as strings, all 3,119
+  directed edges, roles, and detail facts; its JavaScript parses.
+- [ ] Refreshed visual check of the viewer search and directed arrows. Browser
+  automation blocked the local `file://` page and disallowed alternate routes;
+  the earlier user screenshot confirmed base rendering before the layout fix.
 
 ## Data and scientific checks
 
@@ -39,10 +43,12 @@ This is the definition of done. Checkboxes reflect tests actually run on
   accurately disclosed.
 - [x] Data distribution is resolved: either allowed inputs are committed or the
   exact organizer-approved placement step is documented and tested.
-- [ ] Pipeline verification and viewer smoke testing are separate so the local
-  server does not block the pipeline check.
-- [ ] Final remote repository state and platform submission are verified before
-  the deadline.
+- [x] Pipeline verification and viewer structural smoke testing ran separately;
+  the viewer needs no local server.
+- [x] A fresh clone of the pushed `7ac91e1` installed dependencies, rebuilt
+  outputs in 2.93 seconds, passed four tests, and remained clean.
+- [x] Final remote repository state and platform submission were verified
+  before the 18:00 deadline; the portal displayed “Решение сдано” at 15:47.
 
 ## Optional score boosters
 

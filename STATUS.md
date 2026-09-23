@@ -4,11 +4,11 @@ Update this file at every commit. It is the hourly-checkpoint evidence trail (§
 
 ## Now
 
-- **Phase:** plan approved; required pipeline and generated viewer implemented, final delivery checks in progress.
+- **Phase:** required pipeline and generated viewer delivered; official platform submission verified.
 - **Selected task:** Finance — Money Graph, verified in the official portal.
 - **Last verified commands:** `python3 run.py --data data --out results` ✅
-  (0.25 seconds locally, 2.05 seconds in a fresh venv from a clean remote
-  clone); `python3 -m unittest discover -s tests -v` ✅ (4 tests).
+  (0.25 seconds locally, 2.93 seconds in the final fresh remote clone);
+  `python3 -m unittest discover -s tests -v` ✅ (4 tests).
 - **Verified inputs:** 2,248 nodes, 3,119 edges, 4,840 transactions,
   81 seeds; edge aggregates reconcile with transactions.
 - **Input distribution:** user approved including the small official Parquet
@@ -17,8 +17,10 @@ Update this file at every commit. It is the hourly-checkpoint evidence trail (§
 - **Important correction:** the proposed depth-four logistic classifier is not
   approved for the MVP; it reproduced the truncation trap and cannot be called
   a calibrated terminal probability.
-- **Next step:** push the sticky-search viewer update, verify a fresh clone from
-  the final remote state, and complete the official platform submission form.
+- **Final delivery:** code checkpoint `7ac91e1` is pushed to the official private repository.
+  A fresh remote clone installed the pinned dependencies, rebuilt the outputs
+  in 2.93 seconds, passed four acceptance tests, and stayed clean. HackAlem
+  displayed “Решение сдано” for “Money Graph — Кто выше?” at 15:47 local time.
 
 ## Checkpoints
 
@@ -29,7 +31,9 @@ Update this file at every commit. It is the hourly-checkpoint evidence trail (§
 | 3 | 15:33 | user requested `docs/` ignored; public documents and diagram moved to repository root | same pipeline and viewer | 4 tests green; `6fb99b5` pushed | clean-clone rehearsal; submission |
 | 4 | 15:36 | clean remote clone and fresh virtual environment install passed; output wording improved | `python3 run.py --data data --out results` from clone | 2.05 s pipeline, 4 tests green, clone remains clean | user visual viewer check; final remote/submission verification |
 | 5 | 15:41–15:43 | screenshot review found hidden incoming arrows and right-pane clipping; SVG offsets, layout, short/full gid labels updated | generated `results/viewer.html` | 4 tests green; generated JS parses; `29cdcf7` pushed | refreshed visual confirmation |
-| 6 | 15:44 | sidebar search remains visible while the priority list scrolls | regenerated `results/viewer.html` | 4 tests green; generated JS parses | final remote rehearsal; platform submission |
+| 6 | 15:44–15:45 | sidebar search remains visible while the priority list scrolls | regenerated `results/viewer.html` | 4 tests green; generated JS parses; `7ac91e1` pushed | final remote rehearsal; platform submission |
+| 7 | 15:46 | fresh clone of `7ac91e1` from the official remote, new venv and pinned install | one-command pipeline rebuilt all outputs in 2.93 s | 4 tests green; generated outputs left clone clean | platform submission |
+| 8 | 15:47 | HackAlem submission form completed with project name, five tags, and description | official repository link shown on the Finance case | portal displayed “Решение сдано” | refreshed visual viewer check unavailable under browser tool policy |
 
 ## Known issues / decisions taken during the build
 
