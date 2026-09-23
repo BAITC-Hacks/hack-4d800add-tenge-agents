@@ -1,3 +1,12 @@
+.env
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+out/features.parquet
+
+
 __pycache__/
 *.py[cod]
 .env
@@ -11,3 +20,5 @@ scripts/private/
 # Organizer-provided Finance package (local only for now)
 data/
 starter/
+
+/docs
