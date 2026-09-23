@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="260" viewBox="0 0 1200 260" role="img" aria-labelledby="title desc">
+  <title id="title">Money Graph solution flow</title>
+  <desc id="desc">Organizer Parquet data is validated, converted to a directed weighted graph, scored by transparent role rules and Louvain clusters, ranked, then exported as CSV files and a standalone searchable viewer.</desc>
+  <rect width="1200" height="260" fill="#0c1422"/>
+  <g font-family="system-ui, sans-serif" fill="#e9eef7" text-anchor="middle">
+    <text x="600" y="38" font-size="24" font-weight="700">Money Graph · local, deterministic investigation flow</text>
+    <g font-size="16">
+      <rect x="22" y="91" width="178" height="101" rx="12" fill="#1b2b42" stroke="#6bb7ff"/>
+      <text x="111" y="130">3 Parquet inputs</text><text x="111" y="157" font-size="12" fill="#b4c2d6">nodes · edges · transfers</text>
+      <rect x="222" y="91" width="178" height="101" rx="12" fill="#1b2b42" stroke="#6bb7ff"/>
+      <text x="311" y="127">Validate + directed</text><text x="311" y="153">weighted graph</text>
+      <rect x="422" y="91" width="178" height="101" rx="12" fill="#1b2b42" stroke="#f59e0b"/>
+      <text x="511" y="127">Observed metrics</text><text x="511" y="153" font-size="12" fill="#b4c2d6">counts · KZT · seed links</text>
+      <rect x="622" y="91" width="178" height="101" rx="12" fill="#1b2b42" stroke="#34d399"/>
+      <text x="711" y="127">Role rules +</text><text x="711" y="153">Louvain groups</text>
+      <rect x="822" y="91" width="178" height="101" rx="12" fill="#1b2b42" stroke="#a78bfa"/>
+      <text x="911" y="127">Priority score</text><text x="911" y="153" font-size="12" fill="#b4c2d6">numeric reasons</text>
+      <rect x="1022" y="91" width="156" height="101" rx="12" fill="#1b2b42" stroke="#fb7185"/>
+      <text x="1100" y="127">3 CSVs +</text><text x="1100" y="153">HTML viewer</text>
+    </g>
+    <text x="600" y="227" font-size="13" fill="#b4c2d6">All 2,248 nodes included · no runtime LLM or account · roles are hypotheses within the observed graph</text>
+  </g>
+  <g stroke="#92a8bf" stroke-width="3" fill="none" marker-end="url(#arrow)">
+    <path d="M201 141 H216"/><path d="M401 141 H416"/><path d="M601 141 H616"/><path d="M801 141 H816"/><path d="M1001 141 H1016"/>
+  </g>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#92a8bf"/></marker></defs>
+</svg>

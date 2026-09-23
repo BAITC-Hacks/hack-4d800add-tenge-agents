@@ -1,24 +1,30 @@
+# Secrets
 .env
-__pycache__/
-*.pyc
-.pytest_cache/
-.venv/
-venv/
-out/features.parquet
+.env.*
 
-
+# Python
 __pycache__/
 *.py[cod]
-.env
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
 .venv/
 venv/
 
-docs/private
-scripts/private/
-.DS_Store
+# Generated output
+out/
 
-# Organizer-provided Finance package (local only for now)
-data/
+# Local/private material
+docs/private/
+scripts/private/
+
+# Organizer starter is not a runtime dependency
 starter/
 
-/docs
+# OS
+.DS_Store
+
+# Local agent files
+.claude
+
+docs

@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Money Graph — Investigation View</title>
+  <style>
+    :root { color-scheme: dark; font-family: system-ui, sans-serif; background: #0c1422; color: #e9eef7; }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    header { padding: 14px 20px; border-bottom: 1px solid #334155; display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+    h1 { font-size: 21px; margin: 0; }
+    header p { margin: 0; color: #b4c2d6; font-size: 13px; }
+    .layout { display: grid; grid-template-columns: 270px minmax(500px, 1fr) 330px; height: calc(100vh - 68px); }
+    aside, .detail { overflow: auto; padding: 16px; }
+    aside { border-right: 1px solid #334155; }
+    .detail { border-left: 1px solid #334155; }
+    main { min-width: 0; display: flex; flex-direction: column; }
+    form { display: flex; gap: 6px; }
+    input { min-width: 0; flex: 1; border: 1px solid #62748f; border-radius: 6px; background: #17263b; color: #fff; padding: 9px; font-size: 13px; }
+    button { cursor: pointer; border: 1px solid #475569; background: #1b2b42; color: #e9eef7; border-radius: 6px; padding: 8px; }
+    button:hover, button:focus-visible { outline: 2px solid #6bb7ff; background: #28415f; }
+    h2 { margin: 20px 0 8px; font-size: 15px; }
+    .subtle { color: #aabbd2; font-size: 12px; line-height: 1.5; }
+    #status { min-height: 20px; color: #ffce78; margin: 8px 0; font-size: 12px; }
+    #top { list-style: none; padding: 0; margin: 0; }
+    #top li { margin: 4px 0; }
+    #top button { width: 100%; text-align: left; font-size: 12px; line-height: 1.35; }
+    .map-head { padding: 12px 16px 0; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+    .map-head strong { font-size: 14px; }
+    .legend { display: flex; gap: 8px; flex-wrap: wrap; font-size: 11px; color: #b4c2d6; }
+    .swatch { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 3px; }
+    svg { width: 100%; flex: 1; min-height: 400px; }
+    .edge { stroke: #61748c; stroke-width: 1.4; opacity: .65; marker-end: url(#arrow); }
+    .node { cursor: pointer; }
+    .node:hover circle, .node:focus circle { stroke: #fff; stroke-width: 3; }
+    .node text { fill: #dce6f2; font-size: 10px; text-anchor: middle; pointer-events: none; }
+    .node.center text { font-size: 16px; font-weight: 700; }
+    .badge { display: inline-block; padding: 3px 7px; border-radius: 5px; font-size: 12px; font-weight: 700; }
+    .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 12px 0; }
+    .stat { border: 1px solid #34445a; border-radius: 6px; padding: 8px; font-size: 12px; }
+    .stat strong { display: block; font-size: 15px; margin-top: 3px; }
+    .links { max-height: 210px; overflow: auto; border-top: 1px solid #334155; }
+    .links button { display: block; width: 100%; margin: 4px 0; text-align: left; font-size: 11px; }
+    @media (max-width: 1000px) { .layout { grid-template-columns: 220px 1fr; height: auto; } .detail { grid-column: 1 / -1; border-left: 0; border-top: 1px solid #334155; } main { min-height: 520px; } }
+    @media (max-width: 650px) { .layout { display: block; } aside { border-right: 0; border-bottom: 1px solid #334155; max-height: 270px; } main { min-height: 460px; } }
+  </style>
+</head>
+<body>
+  <header><h1>Money Graph</h1><p>Observed July 2026 transfers · investigation hypotheses, not findings of guilt</p></header>
+  <div class="layout">
+    <aside>
+      <form id="search"><input id="gid" aria-label="Search client gid" placeholder="Search exact gid" inputmode="numeric" required><button type="submit">Find</button></form>
+      <p id="status" role="status" aria-live="polite"></p>
+      <p class="subtle">Search any of 2,248 gids. Gids are text here so their 18 digits stay exact.</p>
+      <h2>Investigation priority</h2>
+      <ol id="top"></ol>
+    </aside>
+    <main>
+      <div class="map-head"><strong id="map-title">One-hop directed network</strong><div class="legend" id="legend"></div></div>
+      <svg id="map" viewBox="0 0 1000 700" role="img" aria-label="Directed one-hop transaction graph">
+        <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#92a8bf"></path></marker></defs>
+      </svg>
+      <p class="subtle" style="padding:0 16px">Arrows point from payer to recipient. White outlines mark nodes in the selected cluster. Click a node or a link to inspect it.</p>
+    </main>
+    <section class="detail" aria-label="Selected client details" id="detail"></section>
+  </div>
+  <script id="data" type="application/json">__DATA__</script>
+  <script>
+    const data = JSON.parse(document.getElementById('data').textContent);
+    const byId = new Map(data.nodes.map(node => [node.gid, node]));
+    const inbound = new Map(data.nodes.map(node => [node.gid, []]));
+    const outbound = new Map(data.nodes.map(node => [node.gid, []]));
+    for (const edge of data.edges) { outbound.get(edge.src).push(edge); inbound.get(edge.dst).push(edge); }
+    const colors = { coordinator:'#a78bfa', consolidator:'#f59e0b', distributor:'#38bdf8', transit:'#34d399', terminal:'#fb7185', peripheral:'#94a3b8' };
+    const svg = document.getElementById('map');
+    const ns = 'http://www.w3.org/2000/svg';
+    const money = value => Math.round(value).toLocaleString('en-US') + ' KZT';
+    const shortId = id => '…' + id.slice(-6);
+    const make = (tag, parent, content) => { const el = document.createElement(tag); if (content !== undefined) el.textContent = content; parent.appendChild(el); return el; };
+    const svgEl = (tag, attrs, parent) => { const el = document.createElementNS(ns, tag); for (const [key,value] of Object.entries(attrs)) el.setAttribute(key,value); parent.appendChild(el); return el; };
+    const detail = document.getElementById('detail');
+
+    for (const [role,color] of Object.entries(colors)) {
+      const item = make('span', document.getElementById('legend'));
+      const swatch = make('i', item); swatch.className = 'swatch'; swatch.style.background = color;
+      item.append(role);
+    }
+    for (const row of data.top) {
+      const li = make('li', document.getElementById('top'));
+      const button = make('button', li, `#${row.rank} ${row.gid} · ${row.role} · ${row.priority_score.toFixed(3)}`);
+      button.type = 'button'; button.onclick = () => select(row.gid);
+    }
+
+    function positions(ids, side) {
+      const result = new Map();
+      const columns = ids.length > 30 ? 2 : 1;
+      const rows = Math.ceil(ids.length / columns);
+      ids.forEach((id, i) => {
+        const col = i % columns, row = Math.floor(i / columns);
+        const x = side === 'left' ? (columns === 1 ? 195 : 115 + col * 175) : (columns === 1 ? 805 : 710 + col * 175);
+        result.set(id, {x, y:(row + 1) * 700 / (rows + 1)});
+      });
+      return result;
+    }
+
+    function draw(id) {
+      while (svg.lastChild && svg.lastChild.tagName !== 'defs') svg.removeChild(svg.lastChild);
+      const incoming = inbound.get(id), outgoing = outbound.get(id);
+      const inIds = new Set(incoming.map(e => e.src)), outIds = new Set(outgoing.map(e => e.dst));
+      const both = [...inIds].filter(x => outIds.has(x)).sort();
+      const left = [...inIds].filter(x => !outIds.has(x)).sort();
+      const right = [...outIds].filter(x => !inIds.has(x)).sort();
+      const spots = new Map([[id,{x:500,y:350}]]);
+      for (const [key,value] of positions(left,'left')) spots.set(key,value);
+      for (const [key,value] of positions(right,'right')) spots.set(key,value);
+      both.forEach((key,i) => spots.set(key,{x:300 + (i+1)*400/(both.length+1),y:620}));
+      const allEdges = [...incoming, ...outgoing.filter(e => e.dst !== id || e.src !== id)];
+      for (const edge of allEdges) {
+        const a = spots.get(edge.src), b = spots.get(edge.dst);
+        if (!a || !b) continue;
+        const dx = b.x-a.x, dy = b.y-a.y, len = Math.hypot(dx,dy) || 1;
+        svgEl('line',{x1:a.x+dx*12/len,y1:a.y+dy*12/len,x2:b.x-dx*14/len,y2:b.y-dy*14/len,class:'edge'},svg);
+      }
+      for (const [key,point] of spots) {
+        const node = byId.get(key), center = key === id;
+        const group = svgEl('g',{class:'node'+(center?' center':''),tabindex:'0',role:'button','aria-label':`${key}, ${node.role}`},svg);
+        const sameCluster = node.cluster_id === byId.get(id).cluster_id;
+        svgEl('circle',{cx:point.x,cy:point.y,r:center?19:9,fill:colors[node.role],stroke:sameCluster?'#f8fafc':'#435267','stroke-width':sameCluster?2:1},group);
+        const label = svgEl('text',{x:point.x,y:point.y+(center?39:23)},group);
+        label.textContent = center ? key : shortId(key);
+        svgEl('title',{},group).textContent = `${key} · ${node.role} · cluster ${node.cluster_id}`;
+        group.addEventListener('click',()=>select(key));
+        group.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();select(key);}});
+      }
+      document.getElementById('map-title').textContent = `${id} · ${incoming.length} incoming / ${outgoing.length} outgoing links`;
+    }
+
+    function linkList(title, edges, neighborKey) {
+      make('h2',detail,`${title} (${edges.length})`);
+      const list = make('div',detail); list.className='links';
+      if (!edges.length) make('p',list,'No qualifying observed links.').className='subtle';
+      for (const edge of [...edges].sort((a,b)=>b.sum_kzt-a.sum_kzt || a[neighborKey].localeCompare(b[neighborKey]))) {
+        const button = make('button',list,`${edge[neighborKey]} · ${money(edge.sum_kzt)} · ${edge.n_tx} tx`);
+        button.type='button'; button.onclick=()=>select(edge[neighborKey]);
+      }
+    }
+
+    function showDetail(id) {
+      detail.replaceChildren();
+      const node=byId.get(id);
+      make('h2',detail,`Client ${id}`);
+      const badge=make('span',detail,node.role); badge.className='badge'; badge.style.background=colors[node.role]; badge.style.color='#081321';
+      make('p',detail,`Rule strength ${node.role_score.toFixed(3)} · priority ${node.priority_score.toFixed(3)}`).className='subtle';
+      make('p',detail,node.evidence);
+      if(node.truncated) make('p',detail,'Depth 4 is the observation boundary. No further outgoing transfers were collected.').className='subtle';
+      if(node.is_seed) make('p',detail,'Known seed: incoming transfers from outside the sample are missing.').className='subtle';
+      const stats=make('div',detail); stats.className='stats';
+      for(const [label,value] of [
+        ['Cluster',node.cluster_id],['Depth',node.depth],['Payers',node.in_deg],['Recipients',node.out_deg],
+        ['Observed in',money(node.in_kzt)],['Observed out',money(node.out_kzt)],['Direct seed payers',node.direct_seed_payers]
+      ]) { const box=make('div',stats,label); box.className='stat'; make('strong',box,String(value)); }
+      linkList('Incoming from',inbound.get(id),'src');
+      linkList('Outgoing to',outbound.get(id),'dst');
+    }
+
+    function select(id) {
+      const key=String(id).trim();
+      if(!byId.has(key)){document.getElementById('status').textContent=`Gid ${key} is not in the supplied graph.`;return;}
+      document.getElementById('status').textContent='';
+      document.getElementById('gid').value=key;
+      draw(key); showDetail(key);
+    }
+    document.getElementById('search').addEventListener('submit',event=>{event.preventDefault();select(document.getElementById('gid').value);});
+    select(data.top[0].gid);
+  </script>
+</body>
+</html>
