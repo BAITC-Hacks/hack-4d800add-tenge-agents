@@ -47,6 +47,7 @@ class PipelineAcceptance(unittest.TestCase):
         self.assertTrue(self.nodes.priority_score.between(0, 1).all())
         self.assertTrue(self.nodes.evidence.str.contains(r"\d").all())
         self.assertTrue(self.nodes.evidence.str.len().le(200).all())
+        self.assertFalse(self.nodes.evidence.str.contains(r"\b1 (?:payers|recipients)\b").any())
 
     def test_visibility_boundary_and_isolated_seeds(self):
         depth_four = self.nodes[(self.nodes.depth == 4) & (self.nodes.out_deg == 0)]
@@ -63,9 +64,21 @@ class PipelineAcceptance(unittest.TestCase):
         self.assertEqual(set(self.nodes.cluster_id), set(self.clusters.cluster_id))
         self.assertTrue((self.clusters.n_nodes > 0).all())
         self.assertTrue(self.clusters.hypothesis.str.contains(r"\d").all())
+        self.assertFalse(self.clusters.hypothesis.str.contains(r"\b1 (?:nodes|seeds)\b").any())
+        membership = dict(zip(self.nodes.gid, self.nodes.cluster_id))
+        internal = {cluster_id: 0.0 for cluster_id in self.clusters.cluster_id}
+        for edge in pd.read_parquet(ROOT / "data/edges.parquet").itertuples(index=False):
+            if membership[edge.src] == membership[edge.dst]:
+                internal[membership[edge.src]] += edge.sum_kzt
+        for cluster in self.clusters.itertuples(index=False):
+            self.assertAlmostEqual(cluster.sum_kzt_internal, internal[cluster.cluster_id], delta=0.01)
+        singletons = self.clusters[self.clusters.n_nodes == 1]
+        self.assertEqual(len(singletons), 19)
+        self.assertTrue(singletons.hypothesis.str.contains("no collective role").all())
         self.assertGreaterEqual(len(self.top), 20)
         self.assertEqual(self.top["rank"].tolist(), list(range(1, len(self.top) + 1)))
         self.assertTrue(self.top.why.str.contains(r"\d").all())
+        self.assertFalse(self.top.why.str.contains(r"\b1 (?:payers|recipients)\b").any())
         self.assertEqual(
             self.top.gid.tolist(),
             self.nodes.sort_values(["priority_score", "gid"], ascending=[False, True]).gid.head(len(self.top)).tolist(),
@@ -76,6 +89,7 @@ class PipelineAcceptance(unittest.TestCase):
         payload = json.loads(re.search(r'<script id="data" type="application/json">(.*?)</script>', html, re.S).group(1))
         self.assertEqual(len(payload["nodes"]), 2248)
         self.assertEqual(len(payload["edges"]), 3119)
+        self.assertEqual(len(payload["clusters"]), len(self.clusters))
         self.assertEqual({node["gid"] for node in payload["nodes"]}, set(self.nodes.gid.astype(str)))
         self.assertTrue(all(isinstance(edge["src"], str) and isinstance(edge["dst"], str) for edge in payload["edges"]))
         self.assertEqual(payload["top"][0]["gid"], str(self.top.gid.iloc[0]))

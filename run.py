@@ -32,6 +32,10 @@ SEED_PRIORITY_FACTOR = 0.50
 TRUNCATED_PRIORITY_FACTOR = 0.60
 
 
+def counted(amount, noun):
+    return f"{amount} {noun}{'' if amount == 1 else 's'}"
+
+
 def load_inputs(data_dir):
     required = {
         "nodes": {"gid", "depth", "is_seed"},
@@ -109,22 +113,24 @@ def role_for(row):
     if (not row.is_seed and row.direct_seed_payers >= COORDINATOR_SEED_PAYERS
             and row.in_deg >= COORDINATOR_IN_DEG and row.out_deg >= COORDINATOR_OUT_DEG):
         score = min(0.95, 0.60 + 0.05 * row.direct_seed_payers + 0.02 * row.out_deg)
-        evidence = (f"Observed {row.direct_seed_payers} seed payers, {row.in_deg} payers, "
-                    f"{row.out_deg} recipients; coordination hypothesis.")
+        evidence = (f"Observed {counted(row.direct_seed_payers, 'seed payer')}, "
+                    f"{counted(row.in_deg, 'payer')}, {counted(row.out_deg, 'recipient')}; "
+                    "coordination hypothesis.")
         return "coordinator", score, evidence
     if row.out_deg >= DISTRIBUTOR_OUT_DEG and (row.is_seed or row.out_deg >= 2 * max(1, row.in_deg)):
         score = min(0.95, 0.55 + 0.01 * row.out_deg)
         if row.is_seed:
-            evidence = (f"Observed {row.out_deg} recipients, {outgoing:,.0f} KZT sent; "
+            evidence = (f"Observed {counted(row.out_deg, 'recipient')}, {outgoing:,.0f} KZT sent; "
                         "distribution hypothesis. Seed inflows incomplete.")
         else:
-            evidence = (f"Observed {row.out_deg} recipients vs {row.in_deg} payers; "
+            evidence = (f"Observed {counted(row.out_deg, 'recipient')} vs "
+                        f"{counted(row.in_deg, 'payer')}; "
                         f"{outgoing:,.0f} KZT sent; distribution hypothesis.")
         return "distributor", score, evidence
     if (not row.is_seed and row.depth < 4 and row.in_deg >= CONSOLIDATOR_IN_DEG
             and incoming >= CONSOLIDATOR_IN_KZT and outgoing <= CONSOLIDATOR_MAX_ONWARD * incoming):
         score = min(0.95, 0.58 + 0.025 * row.in_deg + 0.10 * (1 - outgoing / incoming))
-        evidence = (f"Observed {row.in_deg} payers, {incoming:,.0f} KZT in, "
+        evidence = (f"Observed {counted(row.in_deg, 'payer')}, {incoming:,.0f} KZT in, "
                     f"{100 * outgoing / incoming:.0f}% onward; consolidation hypothesis.")
         return "consolidator", score, evidence
     if (not row.is_seed and row.in_deg > 0 and row.out_deg > 0
@@ -137,14 +143,15 @@ def role_for(row):
     if (not row.is_seed and row.depth in (1, 2, 3) and row.out_deg == 0
             and incoming >= TERMINAL_MIN_IN_KZT):
         score = min(0.80, 0.50 + 0.05 * math.log10(incoming / TERMINAL_MIN_IN_KZT + 1))
-        evidence = (f"Observed {incoming:,.0f} KZT from {row.in_deg} payers, "
+        evidence = (f"Observed {incoming:,.0f} KZT from {counted(row.in_deg, 'payer')}, "
                     "0 qualifying outflows; possible terminal, external flows unknown.")
         return "terminal", score, evidence
     if row.truncated_by_depth:
         evidence = (f"Depth 4 boundary: {incoming:,.0f} KZT observed in, "
-                    f"{row.in_deg} payers; onward transfers unobserved.")
+                    f"{counted(row.in_deg, 'payer')}; onward transfers unobserved.")
         return "peripheral", 0.10, evidence
-    evidence = (f"Observed {row.in_deg} payers, {row.out_deg} recipients, "
+    evidence = (f"Observed {counted(row.in_deg, 'payer')}, "
+                f"{counted(row.out_deg, 'recipient')}, "
                 f"{incoming:,.0f} KZT in; insufficient role evidence.")
     if row.is_seed:
         evidence += " Seed inflows incomplete."
@@ -199,8 +206,8 @@ def write_outputs(graph, features, out_dir):
         }
         drivers = sorted(terms, key=lambda name: (-terms[name], name))[:2]
         reason = (f"Observed {row.in_kzt + row.out_kzt:,.0f} KZT in+out activity; "
-                  f"{row.in_deg} payers, {row.out_deg} recipients, "
-                  f"{row.direct_seed_payers} direct seed payers; "
+                  f"{counted(row.in_deg, 'payer')}, {counted(row.out_deg, 'recipient')}, "
+                  f"{counted(row.direct_seed_payers, 'direct seed payer')}; "
                   f"main score terms: {drivers[0]} {terms[drivers[0]]:.2f}, "
                   f"{drivers[1]} {terms[drivers[1]]:.2f}.")
         if row.is_seed:
@@ -220,16 +227,34 @@ def write_outputs(graph, features, out_dir):
         if cluster_by_gid[src] == cluster_by_gid[dst]:
             internal[cluster_by_gid[src]] += attrs["sum_kzt"]
     cluster_rows = []
+    purposes = {
+        "coordinator": "coordination", "consolidator": "collection",
+        "distributor": "distribution", "transit": "movement",
+        "terminal": "observed receipt",
+    }
     for cluster_id, group in features.groupby("cluster_id", sort=True):
         leaders = ranked.loc[ranked.cluster_id == cluster_id, "gid"].head(3).tolist()
         n_seed = int(group.is_seed.sum())
         turnover = internal[cluster_id]
+        role_counts = group.loc[group.role != "peripheral", "role"].value_counts().to_dict()
+        if len(group) == 1:
+            hypothesis = (f"Observed 1 node, {n_seed} seed, 0 internal KZT; "
+                          "no collective role can be inferred.")
+        elif role_counts:
+            main_role = sorted(role_counts, key=lambda role: (-role_counts[role], role))[0]
+            hypothesis = (f"Observed {counted(len(group), 'node')}, "
+                          f"{counted(n_seed, 'seed')}, {turnover:,.0f} KZT "
+                          f"internal; {role_counts[main_role]} {main_role} candidates "
+                          f"suggest {purposes[main_role]} for review.")
+        else:
+            hypothesis = (f"Observed {counted(len(group), 'node')}, "
+                          f"{counted(n_seed, 'seed')}, {turnover:,.0f} KZT "
+                          "internal; role pattern insufficient for a group function.")
         cluster_rows.append({
             "cluster_id": int(cluster_id), "n_nodes": len(group), "n_seed": n_seed,
             "sum_kzt_internal": round(turnover, 2),
             "top_gids": "|".join(map(str, leaders)),
-            "hypothesis": (f"Observed group of {len(group)} nodes and {n_seed} seeds, "
-                           f"{turnover:,.0f} KZT internal; review shared flows."),
+            "hypothesis": hypothesis,
         })
     pd.DataFrame(cluster_rows).to_csv(out_dir / "clusters.csv", index=False)
     return roles, top, cluster_rows

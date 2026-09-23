@@ -10,7 +10,7 @@ This is the definition of done. Checkboxes reflect tests actually run on
 - [x] `nodes_roles.csv` has exactly 2,248 rows and the required non-empty
   columns: `gid`, `role`, `role_score`, `cluster_id`, `priority_score`, and
   numeric `evidence`.
-- [ ] Every role has a documented formal rule/metric and three arbitrary gids
+- [x] Every role has a documented formal rule/metric and three arbitrary gids
   can be explained from computed evidence in under one minute each.
 - [x] Every node has a cluster; `clusters.csv` contains cluster size, seed
   count, internal turnover, top gids, and a cautious hypothesis.
@@ -34,10 +34,10 @@ This is the definition of done. Checkboxes reflect tests actually run on
   role-threshold, and one-million-node scaling instructions.
 - [x] The solution diagram is present.
 - [x] Core functionality works without a personal account or LLM key.
-- [ ] Secrets and private organizer/event materials are not tracked.
+- [x] Secrets and private organizer/event materials are not tracked.
 - [x] Organizer starter code, third-party libraries, and AI assistance are
   accurately disclosed.
-- [ ] Data distribution is resolved: either allowed inputs are committed or the
+- [x] Data distribution is resolved: either allowed inputs are committed or the
   exact organizer-approved placement step is documented and tested.
 - [ ] Pipeline verification and viewer smoke testing are separate so the local
   server does not block the pipeline check.

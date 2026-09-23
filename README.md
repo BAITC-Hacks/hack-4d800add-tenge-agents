@@ -44,8 +44,9 @@ output contract and repeatability:
 python3 -m unittest discover -s tests -v
 ```
 
-On the provided dataset the pipeline completed in about **0.22 seconds** on
-the development laptop, below the five-minute limit. Observed role counts:
+On the provided dataset the pipeline completed in about **0.2 seconds** in
+the development environment and **2.05 seconds** in a fresh virtual environment
+from a clean remote clone, below the five-minute limit. Observed role counts:
 5 coordinator, 39 consolidator, 61 distributor, 38 transit, 306 terminal,
 1,799 peripheral. Every role and priority number is a deterministic heuristic,
 not a trained or calibrated probability.

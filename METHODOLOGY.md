@@ -69,7 +69,8 @@ For each cluster, `sum_kzt_internal` is the sum of original **directed** edge
 amounts whose two endpoints belong to that cluster. `n_seed` and `n_nodes`
 count members, and `top_gids` lists up to three members by priority. The
 `hypothesis` gives cluster size, seed count, internal KZT, and a cautious
-review suggestion. Community membership is a grouping aid, not evidence of
+function suggested by the most common non-peripheral role, or states when
+the group evidence is insufficient. Community membership is a grouping aid, not evidence of
 coordination or culpability by itself.
 
 ## Priority ranking

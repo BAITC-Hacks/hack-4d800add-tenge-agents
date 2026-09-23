@@ -6,7 +6,9 @@ Update this file at every commit. It is the hourly-checkpoint evidence trail (§
 
 - **Phase:** plan approved; required pipeline and generated viewer implemented, final delivery checks in progress.
 - **Selected task:** Finance — Money Graph, verified in the official portal.
-- **Last verified commands:** `python3 run.py --data data --out results` ✅ (0.23 seconds); `python3 -m unittest discover -s tests -v` ✅ (4 tests).
+- **Last verified commands:** `python3 run.py --data data --out results` ✅
+  (0.25 seconds locally, 2.05 seconds in a fresh venv from a clean remote
+  clone); `python3 -m unittest discover -s tests -v` ✅ (4 tests).
 - **Verified inputs:** 2,248 nodes, 3,119 edges, 4,840 transactions,
   81 seeds; edge aggregates reconcile with transactions.
 - **Input distribution:** user approved including the small official Parquet
@@ -15,26 +17,28 @@ Update this file at every commit. It is the hourly-checkpoint evidence trail (§
 - **Important correction:** the proposed depth-four logistic classifier is not
   approved for the MVP; it reproduced the truncation trap and cannot be called
   a calibrated terminal probability.
-- **Next step:** finish the requested docs relocation, clean-clone rehearsal,
-  user viewer inspection, and platform submission.
+- **Next step:** commit and push the screenshot-driven viewer corrections, await
+  a refreshed visual check, verify the final remote state, and complete the
+  official platform submission form.
 
 ## Checkpoints
 
 | # | Time | What changed | What is runnable | Tested | Remaining |
 |---|---|---|---|---|---|
 | 1 | 14:55 | official materials + audited design baseline | organizer starter → 3 schema CSVs | data integrity + starter sanity | implementation plan |
-| 2 | 16:28–16:31 | approved plan; deterministic roles, clusters, ranking, generated viewer | `python3 run.py --data data --out results` | 4 acceptance tests green, 0.23 s run; `5eaae53` pushed | viewer visual inspection; clean-clone rehearsal |
-| 3 | 16:33 | user requested `docs/` ignored; public documents and diagram moved to repository root | same pipeline and viewer | tests to rerun before corrective commit | clean-clone rehearsal; submission |
-| 4 |  |  |  |  |  |
-| 5 |  |  |  |  |  |
+| 2 | 15:28–15:31 | approved plan; deterministic roles, clusters, ranking, generated viewer | `python3 run.py --data data --out results` | 4 acceptance tests green, 0.23 s run; `5eaae53` pushed | viewer visual inspection; clean-clone rehearsal |
+| 3 | 15:33 | user requested `docs/` ignored; public documents and diagram moved to repository root | same pipeline and viewer | 4 tests green; `6fb99b5` pushed | clean-clone rehearsal; submission |
+| 4 | 15:36 | clean remote clone and fresh virtual environment install passed; output wording improved | `python3 run.py --data data --out results` from clone | 2.05 s pipeline, 4 tests green, clone remains clean | user visual viewer check; final remote/submission verification |
+| 5 | 15:41 | screenshot review found hidden incoming arrows and right-pane clipping; SVG offsets, layout, short/full gid labels updated | generated `results/viewer.html` | 4 tests green; generated JS parses | user refresh and visual confirmation; next push |
 | 6 |  |  |  |  |  |
 
 ## Known issues / decisions taken during the build
 
 - The organizer archive is hackathon-use-only. Commit it only to this official
   repository, with no extra remote, and verify the remote and submission.
-- Browser automation blocked opening the local `file://` viewer; generation and
-  embedded-data contract are tested, but visual inspection remains to be done.
+- Browser automation blocked opening the local `file://` viewer. A user
+  screenshot confirmed base rendering and exposed arrow/layout issues that
+  have been fixed; refreshed search and visual confirmation remain pending.
 
 ## Metrics from the last run
 - organizer starter elapsed: about 1 second
