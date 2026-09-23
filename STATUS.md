@@ -10,21 +10,21 @@ Update this file at every commit. It is the hourly-checkpoint evidence trail (§
 - **Verified inputs:** 2,248 nodes, 3,119 edges, 4,840 transactions,
   81 seeds; edge aggregates reconcile with transactions.
 - **Input distribution:** user approved including the small official Parquet
-  package in this official repository for judging; it is staged for the first
-  implementation checkpoint.
+  package in this official repository for judging; it was committed and pushed
+  in `5eaae53`.
 - **Important correction:** the proposed depth-four logistic classifier is not
   approved for the MVP; it reproduced the truncation trap and cannot be called
   a calibrated terminal probability.
-- **Next step:** commit and push the runnable checkpoint, then complete final
-  docs, clean-clone rehearsal, viewer inspection, and platform submission.
+- **Next step:** finish the requested docs relocation, clean-clone rehearsal,
+  user viewer inspection, and platform submission.
 
 ## Checkpoints
 
 | # | Time | What changed | What is runnable | Tested | Remaining |
 |---|---|---|---|---|---|
 | 1 | 14:55 | official materials + audited design baseline | organizer starter → 3 schema CSVs | data integrity + starter sanity | implementation plan |
-| 2 | 16:28 | approved plan; deterministic roles, clusters, ranking, generated viewer | `python3 run.py --data data --out results` | 4 acceptance tests green, 0.23 s run | commit/push; viewer visual inspection; clean-clone rehearsal |
-| 3 |  |  |  |  |  |
+| 2 | 16:28–16:31 | approved plan; deterministic roles, clusters, ranking, generated viewer | `python3 run.py --data data --out results` | 4 acceptance tests green, 0.23 s run; `5eaae53` pushed | viewer visual inspection; clean-clone rehearsal |
+| 3 | 16:33 | user requested `docs/` ignored; public documents and diagram moved to repository root | same pipeline and viewer | tests to rerun before corrective commit | clean-clone rehearsal; submission |
 | 4 |  |  |  |  |  |
 | 5 |  |  |  |  |  |
 | 6 |  |  |  |  |  |

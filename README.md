@@ -54,7 +54,7 @@ not a trained or calibrated probability.
 
 All criteria use only observed graph attributes. Rules run in the order below;
 the first match becomes the primary role. Full formulas and rationale are in
-[the methodology](docs/METHODOLOGY.md), with named thresholds in `run.py`.
+[the methodology](METHODOLOGY.md), with named thresholds in `run.py`.
 
 | Role | Required observed evidence |
 |---|---|
@@ -110,7 +110,7 @@ comparison.
 
 ## Architecture and scaling
 
-![Solution diagram](docs/solution.svg)
+![Solution diagram](solution.svg)
 
 `run.py` loads and reconciles data, builds a directed weighted NetworkX graph,
 calculates observed features, applies transparent role rules, clusters an

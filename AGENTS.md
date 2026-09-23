@@ -6,11 +6,11 @@ they conflict with the task, evidence, or remaining time.
 
 ## Read first
 
-1. `docs/STATUS.md`
-2. `docs/REQUIREMENTS.md`
-3. `docs/VERIFICATION.md`
-4. `docs/METHODOLOGY.md`
-5. `docs/ARCHITECTURE.md`
+1. `STATUS.md`
+2. `REQUIREMENTS.md`
+3. `VERIFICATION.md`
+4. `METHODOLOGY.md`
+5. `ARCHITECTURE.md`
 6. relevant files in `docs/private/`, especially current event rules and the
    internal build plan
 
@@ -50,7 +50,7 @@ treat an older Fable decision as fixed merely because it is written down.
 Choose the simplest viable Python and local-viewer stack during planning. Do not
 introduce a second build toolchain or framework without a concrete scoring need.
 Run commands belong in README once they actually work; thresholds belong in
-`docs/METHODOLOGY.md` and implementation configuration.
+`METHODOLOGY.md` and implementation configuration.
 
 ## Local organizer inputs
 
