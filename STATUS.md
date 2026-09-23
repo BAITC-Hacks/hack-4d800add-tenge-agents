@@ -17,9 +17,8 @@ Update this file at every commit. It is the hourly-checkpoint evidence trail (§
 - **Important correction:** the proposed depth-four logistic classifier is not
   approved for the MVP; it reproduced the truncation trap and cannot be called
   a calibrated terminal probability.
-- **Next step:** commit and push the screenshot-driven viewer corrections, await
-  a refreshed visual check, verify the final remote state, and complete the
-  official platform submission form.
+- **Next step:** push the sticky-search viewer update, verify a fresh clone from
+  the final remote state, and complete the official platform submission form.
 
 ## Checkpoints
 
@@ -29,16 +28,17 @@ Update this file at every commit. It is the hourly-checkpoint evidence trail (§
 | 2 | 15:28–15:31 | approved plan; deterministic roles, clusters, ranking, generated viewer | `python3 run.py --data data --out results` | 4 acceptance tests green, 0.23 s run; `5eaae53` pushed | viewer visual inspection; clean-clone rehearsal |
 | 3 | 15:33 | user requested `docs/` ignored; public documents and diagram moved to repository root | same pipeline and viewer | 4 tests green; `6fb99b5` pushed | clean-clone rehearsal; submission |
 | 4 | 15:36 | clean remote clone and fresh virtual environment install passed; output wording improved | `python3 run.py --data data --out results` from clone | 2.05 s pipeline, 4 tests green, clone remains clean | user visual viewer check; final remote/submission verification |
-| 5 | 15:41 | screenshot review found hidden incoming arrows and right-pane clipping; SVG offsets, layout, short/full gid labels updated | generated `results/viewer.html` | 4 tests green; generated JS parses | user refresh and visual confirmation; next push |
-| 6 |  |  |  |  |  |
+| 5 | 15:41–15:43 | screenshot review found hidden incoming arrows and right-pane clipping; SVG offsets, layout, short/full gid labels updated | generated `results/viewer.html` | 4 tests green; generated JS parses; `29cdcf7` pushed | refreshed visual confirmation |
+| 6 | 15:44 | sidebar search remains visible while the priority list scrolls | regenerated `results/viewer.html` | 4 tests green; generated JS parses | final remote rehearsal; platform submission |
 
 ## Known issues / decisions taken during the build
 
 - The organizer archive is hackathon-use-only. Commit it only to this official
   repository, with no extra remote, and verify the remote and submission.
-- Browser automation blocked opening the local `file://` viewer. A user
-  screenshot confirmed base rendering and exposed arrow/layout issues that
-  have been fixed; refreshed search and visual confirmation remain pending.
+- Browser automation blocked opening the local `file://` viewer and explicitly
+  disallowed an alternate browser route. The user-provided screenshot confirmed
+  base rendering and exposed arrow/layout issues that have been fixed;
+  refreshed visual confirmation remains unavailable.
 
 ## Metrics from the last run
 - organizer starter elapsed: about 1 second
