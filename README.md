@@ -1,6 +1,6 @@
 # Money Graph — «Кто выше?»
 
-HackAlem AI 2026 · Finance track · solo project.
+HackAlem AI 2026 · Finance track · Tenge Agents team
 
 An AML analyst starts with 81 known seed clients and an outgoing-only, four-hop
 transfer sample. Money Graph produces a ranked investigation queue, numeric
@@ -9,8 +9,9 @@ directed network view. Roles are **hypotheses for review**, not findings of guil
 
 ## Run from this repository
 
-Python 3.10 or newer is required. The official organizer input files are in
-`data/` in this repository for hackathon judging only.
+Python 3.10–3.12 is required; the pinned dependencies do not support Python
+3.13 or newer without compilation or version changes. The official organizer
+input files are in `data/` in this repository for hackathon judging only.
 
 ```bash
 python3 -m venv .venv
@@ -28,6 +29,9 @@ files, checks their consistency, and writes:
 | `results/clusters.csv` | 91 clusters with size, seed count, internal observed KZT, top gids, and hypothesis |
 | `results/top_nodes.csv` | 30 ranked gids with numeric reasons |
 | `results/viewer.html` | Self-contained searchable local viewer |
+
+With the provided data, the expected first result is gid
+`100000004015047100`, role `consolidator`, priority approximately `0.820`.
 
 Open `results/viewer.html` in a browser; it needs no server, account, network,
 API key, or LLM. Search an exact `gid`, or click a top-list entry. The map shows
@@ -51,8 +55,9 @@ versions in `requirements.txt`. It requires no environment variables, API
 keys, external services, JavaScript packages, or build step.
 
 On the provided dataset the pipeline completed in about **0.2 seconds** in
-the development environment and **2.05 seconds** in a fresh virtual environment
-from a clean remote clone, below the five-minute limit. Observed role counts:
+the development environment and approximately **2–3 seconds** in a fresh
+virtual environment from a clean remote clone, below the five-minute limit.
+Observed role counts:
 5 coordinator, 39 consolidator, 61 distributor, 38 transit, 306 terminal,
 1,799 peripheral. Every role and priority number is a deterministic heuristic,
 not a trained or calibrated probability.

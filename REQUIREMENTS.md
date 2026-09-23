@@ -26,7 +26,7 @@ balances, operation types, or other customer attributes.
 
 ## Output (fixed schemas — checked mechanically)
 
-**`out/nodes_roles.csv`** — exactly 2 248 rows
+**`results/nodes_roles.csv`** — exactly 2 248 rows
 | col | type | meaning |
 |---|---|---|
 | gid | int64 | client id |
@@ -36,9 +36,9 @@ balances, operation types, or other customer attributes.
 | priority_score | float 0–1 | analyst priority |
 | evidence | str ≤200 | human-readable, **must contain numbers** |
 
-**`out/clusters.csv`** — one row per cluster: `cluster_id, n_nodes, n_seed, sum_kzt_internal, top_gids, hypothesis`
+**`results/clusters.csv`** — one row per cluster: `cluster_id, n_nodes, n_seed, sum_kzt_internal, top_gids, hypothesis`
 
-**`out/top_nodes.csv`** — ≥ 20 rows sorted by priority: `rank, gid, role, priority_score, why`
+**`results/top_nodes.csv`** — ≥ 20 rows sorted by priority: `rank, gid, role, priority_score, why`
 
 Extra columns allowed; required ones may not be removed.
 

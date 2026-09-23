@@ -48,6 +48,7 @@ are not read by the pipeline or viewer.
 
 ## Data handling
 
-The organizer describes the dataset as anonymized and restricted to hackathon
-use. Do not infer that identifiers are synthetic, and do not upload the data to
-an external service without confirming that the rules allow it.
+The organizer describes the dataset as anonymized, restricted to hackathon
+use, and keyed by synthetic `gid` identifiers that are not linked to people.
+Do not upload the data to an external service without confirming that the rules
+allow it.

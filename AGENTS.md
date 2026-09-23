@@ -54,6 +54,6 @@ Run commands belong in README once they actually work; thresholds belong in
 
 ## Local organizer inputs
 
-`data/` and `starter/` are complete and verified but intentionally ignored for
-the current progress commit. Do not delete or modify them. Resolve the final
-organizer-approved data distribution before claiming fresh-clone reproducibility.
+`data/` is complete, verified, and committed to this official repository for
+hackathon judging. `starter/` is complete locally but remains ignored because
+the finished pipeline does not depend on it. Do not delete or modify either.
