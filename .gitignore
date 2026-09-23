@@ -8,4 +8,6 @@ docs/private
 scripts/private/
 .DS_Store
 
-hackathon data
+# Organizer-provided Finance package (local only for now)
+data/
+starter/
