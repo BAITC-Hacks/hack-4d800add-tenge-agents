@@ -44,6 +44,12 @@ output contract and repeatability:
 python3 -m unittest discover -s tests -v
 ```
 
+### Technology and configuration
+
+The solution uses Python, pandas, PyArrow, NetworkX, and NumPy with the exact
+versions in `requirements.txt`. It requires no environment variables, API
+keys, external services, JavaScript packages, or build step.
+
 On the provided dataset the pipeline completed in about **0.2 seconds** in
 the development environment and **2.05 seconds** in a fresh virtual environment
 from a clean remote clone, below the five-minute limit. Observed role counts:
@@ -105,9 +111,8 @@ accuracy.
 The input graph has 35 weak components **when all 19 isolated seeds are
 included**; the organizer's stated 16 counts only edge-containing components.
 Louvain discards flow direction for grouping and may produce different
-communities under a different NetworkX version. The pinned minimum dependency
-versions are in `requirements.txt`; use the checked environment for exact CSV
-comparison.
+communities under a different NetworkX version. The pinned dependency versions
+are in `requirements.txt`; use the checked environment for exact CSV comparison.
 
 ## Architecture and scaling
 
